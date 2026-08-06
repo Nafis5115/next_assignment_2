@@ -1,12 +1,18 @@
-import express, { type Request, type Response } from "express";
+import initDB from "./db";
+import app from "./app";
 
-const app = express();
 const port = process.env.PORT || 3000;
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello");
-});
+const main = async () => {
+  try {
+    await initDB();
 
-app.listen(port, () => {
-  console.log(`Server Running on port ${port}`);
-});
+    app.listen(port, () => {
+      console.log(`Server Running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+  }
+};
+
+main();
