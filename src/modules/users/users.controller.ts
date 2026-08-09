@@ -22,15 +22,44 @@ const createUser = async (req: Request, res: Response) => {
 const getAllUsers = async (req: Request, res: Response) => {
   try {
     const result = await userService.getAllUsersFromDB();
-    res.status(200).send({
+    if (result.rows.length === 0) {
+      return res.status(404).send({
+        success: true,
+        message: "No user found!",
+      });
+    }
+    return res.status(200).send({
       success: true,
       message: "Successfully get all users!",
       data: result.rows,
     });
   } catch (error) {
-    res.status(200).send({
+    return res.status(200).send({
       success: false,
       message: "Error from getAllUsers",
+      error: error,
+    });
+  }
+};
+
+const getSingleUser = async (req: Request, res: Response) => {
+  try {
+    const result = await userService.getSingleUserFromDB(req.query.email);
+    if (result.rows.length === 0) {
+      return res.status(404).send({
+        success: true,
+        message: "No user found!",
+      });
+    }
+    return res.status(200).send({
+      success: true,
+      message: "Successfully get single user!",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    return res.status(200).send({
+      success: false,
+      message: "Error from getSingleUser",
       error: error,
     });
   }
@@ -39,6 +68,7 @@ const getAllUsers = async (req: Request, res: Response) => {
 const userController = {
   createUser,
   getAllUsers,
+  getSingleUser,
 };
 
 export default userController;
