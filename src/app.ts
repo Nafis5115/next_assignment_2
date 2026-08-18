@@ -4,12 +4,14 @@ import express, {
   type Response,
 } from "express";
 import userRoutes from "./modules/users/users.route";
+import authRoutes from "./modules/auth/auth.route";
 
 const app: Application = express();
 
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello");
