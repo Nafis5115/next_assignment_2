@@ -4,13 +4,19 @@ import authService from "./auth.service";
 const loginUser = async (req: Request, res: Response) => {
   try {
     const result = await authService.loginUserIntoDB(req.body);
-    res.status(201).send({
+    const { accessToken } = result;
+    res.cookie("accessToken", accessToken, {
+      secure: false,
+      sameSite: "lax",
+      httpOnly: true,
+    });
+    return res.status(201).send({
       success: true,
       message: "Login successful!",
-      //   data: result.rows[0],
+      data: result,
     });
   } catch (error) {
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
       message: "Error from loginUser",
       error: error instanceof Error ? error.message : error,

@@ -1,5 +1,8 @@
 import { pool } from "../../db";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import config from "../../config";
+
 const loginUserIntoDB = async (payload: {
   email: string;
   password: string;
@@ -22,6 +25,18 @@ const loginUserIntoDB = async (payload: {
   if (!matchedPassword) {
     throw new Error("Password in incorrect.");
   }
+  const jwtPayload = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  };
+
+  const accessToken = jwt.sign(jwtPayload, config.jwt_secret as string, {
+    expiresIn: "1D",
+  });
+
+  return { accessToken };
 };
 
 const authService = {
