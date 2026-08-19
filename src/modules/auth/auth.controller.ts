@@ -4,8 +4,8 @@ import authService from "./auth.service";
 const loginUser = async (req: Request, res: Response) => {
   try {
     const result = await authService.loginUserIntoDB(req.body);
-    const { accessToken } = result;
-    res.cookie("accessToken", accessToken, {
+    const { token } = result;
+    res.cookie("accessToken", token, {
       secure: false,
       sameSite: "lax",
       httpOnly: true,

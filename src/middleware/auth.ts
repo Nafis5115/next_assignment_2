@@ -25,7 +25,7 @@ const auth = (...roles: ROLES[]) => {
           message: "User not found!",
         });
       }
-
+      req.user = user;
       if (roles.length && !roles.includes(user.role)) {
         return res.status(403).send({
           message: "Forbidden access!",
