@@ -84,10 +84,29 @@ const getSingleIssueFromDB = async (id: any) => {
   return result;
 };
 
+const updateIssueIntoDB = async (payload: IIssue, id: any) => {
+  const { title, description, type, status } = payload;
+
+  const result = await pool.query(
+    `
+    UPDATE  issues
+    SET title = COALESCE($1, title),
+    description = COALESCE($2, description),
+    type = COALESCE($3, type),
+    status = COALESCE($4, status)
+    WHERE id = $5
+    RETURNING *
+    `,
+    [title, description, type, status, id],
+  );
+  return result;
+};
+
 const issueService = {
   createIssueIntoDB,
   getAllIssuesFromDB,
   getSingleIssueFromDB,
+  updateIssueIntoDB,
 };
 
 export default issueService;
