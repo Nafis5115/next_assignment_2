@@ -29,7 +29,24 @@ const getAllIssues = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: "Error from createIssue",
+      message: "Error from getAllIssues",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+};
+
+const getSingleIssue = async (req: Request, res: Response) => {
+  try {
+    const result = await issueService.getSingleIssueFromDB(req.params.id);
+    res.status(200).send({
+      success: true,
+      message: "Issue retrieved successfully!",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error from getSingleIssue",
       error: error instanceof Error ? error.message : error,
     });
   }
@@ -38,6 +55,7 @@ const getAllIssues = async (req: Request, res: Response) => {
 const issueController = {
   createIssue,
   getAllIssues,
+  getSingleIssue,
 };
 
 export default issueController;

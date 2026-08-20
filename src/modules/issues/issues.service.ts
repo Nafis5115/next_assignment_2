@@ -73,9 +73,21 @@ const getAllIssuesFromDB = async (query: {
   return result;
 };
 
+const getSingleIssueFromDB = async (id: any) => {
+  const result = await pool.query(
+    `
+    SELECT * FROM users WHERE id = $1
+     `,
+    [id],
+  );
+
+  return result;
+};
+
 const issueService = {
   createIssueIntoDB,
   getAllIssuesFromDB,
+  getSingleIssueFromDB,
 };
 
 export default issueService;
