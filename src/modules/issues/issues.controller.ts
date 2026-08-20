@@ -3,7 +3,6 @@ import issueService from "./issues.service";
 
 const createIssue = async (req: Request, res: Response) => {
   try {
-    console.log(req.user?.id);
     const result = await issueService.createIssueIntoDB(req.body, req.user?.id);
     res.status(201).send({
       success: true,
@@ -19,8 +18,26 @@ const createIssue = async (req: Request, res: Response) => {
   }
 };
 
+const getAllIssues = async (req: Request, res: Response) => {
+  try {
+    const result = await issueService.getAllIssuesFromDB(req.query);
+    res.status(201).send({
+      success: true,
+      message: "Issue retrieved successfully!",
+      data: result.rows,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error from createIssue",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+};
+
 const issueController = {
   createIssue,
+  getAllIssues,
 };
 
 export default issueController;

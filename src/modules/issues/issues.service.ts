@@ -29,8 +29,53 @@ const createIssueIntoDB = async (payload: IIssue, reporterId: number) => {
   return result;
 };
 
+const getAllIssuesFromDB = async (query: {
+  sort?: string;
+  type?: string;
+  status?: string;
+}) => {
+  const { sort = "newest", type, status } = query;
+  const values: string[] = [];
+  const conditions: string[] = [];
+
+  if (!["newest", "oldest"].includes(sort)) {
+    throw new Error("Invalid sort value.");
+  }
+  if (type && !["bug", "feature_request"].includes(type)) {
+    throw new Error("Invalid type value.");
+  }
+  if (status && !["open", "in_progress", "resolved"].includes(status)) {
+    throw new Error("Invalid status value.");
+  }
+
+  if (type) {
+    values.push(type);
+    conditions.push(`type = $${values.length}`);
+  }
+  if (status) {
+    values.push(status);
+    conditions.push(`status = $${values.length}`);
+  }
+  const order = sort === "newest" ? "DESC" : "ASC";
+
+  const whereClause =
+    values.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+  const result = await pool.query(
+    `
+        SELECT * FROM issues
+        ${whereClause}
+        ORDER BY created_at ${order}
+        `,
+    values,
+  );
+
+  return result;
+};
+
 const issueService = {
   createIssueIntoDB,
+  getAllIssuesFromDB,
 };
 
 export default issueService;
