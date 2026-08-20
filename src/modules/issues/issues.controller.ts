@@ -74,7 +74,17 @@ const updateIssue = async (req: Request, res: Response) => {
 
 const deleteIssue = async (req: Request, res: Response) => {
   try {
-    await issueService.deleteIssueFromDB(req.params.id);
+    const result = await issueService.deleteIssueFromDB(
+      req.params.id,
+      req.user?.id,
+      req.user?.role,
+    );
+    if (result.rowCount === 0) {
+      return res.status(403).send({
+        success: false,
+        message: "You are not allowed to delete this issue.",
+      });
+    }
     res.status(200).send({
       success: true,
       message: "Issue deleted successfully!",

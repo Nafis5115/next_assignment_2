@@ -87,6 +87,17 @@ const getSingleIssueFromDB = async (id: any) => {
 const updateIssueIntoDB = async (payload: IIssue, id: any) => {
   const { title, description, type, status } = payload;
 
+  const issueData = await pool.query(
+    `
+  SELECT * FROM issues WHERE id = $1
+  `,
+    [id],
+  );
+
+  if (issueData.rowCount === 0) {
+    throw new Error("Issue not found.");
+  }
+
   const result = await pool.query(
     `
     UPDATE  issues
@@ -102,13 +113,25 @@ const updateIssueIntoDB = async (payload: IIssue, id: any) => {
   return result;
 };
 
-const deleteIssueFromDB = async (id: any) => {
+const deleteIssueFromDB = async (id: any, reporter_id: any, role: string) => {
+  const issueData = await pool.query(
+    `
+  SELECT * FROM issues WHERE id = $1
+  `,
+    [id],
+  );
+
+  if (issueData.rowCount === 0) {
+    throw new Error("Issue not found.");
+  }
   const result = await pool.query(
     `
     DELETE FROM issues
     WHERE id = $1
+      AND (reporter_id = $2 OR $3 = 'maintainer')
+    RETURNING *
     `,
-    [id],
+    [id, reporter_id, role],
   );
   return result;
 };
