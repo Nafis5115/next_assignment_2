@@ -10,7 +10,7 @@ const loginUser = async (req: Request, res: Response) => {
       sameSite: "lax",
       httpOnly: true,
     });
-    return res.status(201).send({
+    return res.status(200).send({
       success: true,
       message: "Login successful!",
       data: result,

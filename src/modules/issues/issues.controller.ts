@@ -21,7 +21,7 @@ const createIssue = async (req: Request, res: Response) => {
 const getAllIssues = async (req: Request, res: Response) => {
   try {
     const result = await issueService.getAllIssuesFromDB(req.query);
-    res.status(201).send({
+    res.status(200).send({
       success: true,
       message: "Issue retrieved successfully!",
       data: result.rows,
