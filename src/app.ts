@@ -3,7 +3,7 @@ import express, {
   type Request,
   type Response,
 } from "express";
-import userRoutes from "./modules/users/users.route";
+
 import authRoutes from "./modules/auth/auth.route";
 import cookieParser from "cookie-parser";
 import issueRoutes from "./modules/issues/issues.route";
@@ -13,7 +13,6 @@ const app: Application = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/issues", issueRoutes);
 

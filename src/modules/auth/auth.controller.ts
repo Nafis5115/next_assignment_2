@@ -1,6 +1,23 @@
 import type { Request, Response } from "express";
 import authService from "./auth.service";
 
+const createUser = async (req: Request, res: Response) => {
+  try {
+    const result = await authService.createUserIntoDB(req.body);
+    res.status(201).send({
+      success: true,
+      message: "User registered successfully!",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error from createUser",
+      error: error,
+    });
+  }
+};
+
 const loginUser = async (req: Request, res: Response) => {
   try {
     const result = await authService.loginUserIntoDB(req.body);
@@ -26,6 +43,7 @@ const loginUser = async (req: Request, res: Response) => {
 
 const authController = {
   loginUser,
+  createUser,
 };
 
 export default authController;
