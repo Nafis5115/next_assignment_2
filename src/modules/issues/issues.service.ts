@@ -84,7 +84,12 @@ const getSingleIssueFromDB = async (id: any) => {
   return result;
 };
 
-const updateIssueIntoDB = async (payload: IIssue, id: any) => {
+const updateIssueIntoDB = async (
+  payload: IIssue,
+  id: any,
+  reporter_id: any,
+  role: string,
+) => {
   const { title, description, type, status } = payload;
 
   const issueData = await pool.query(
@@ -105,10 +110,13 @@ const updateIssueIntoDB = async (payload: IIssue, id: any) => {
     description = COALESCE($2, description),
     type = COALESCE($3, type),
     status = COALESCE($4, status)
-    WHERE id = $5
+    WHERE id = $5 AND (
+     (status = 'open' AND reporter_id = $7)
+     OR $6 = 'maintainer'
+     )
     RETURNING *
     `,
-    [title, description, type, status, id],
+    [title, description, type, status, id, role, reporter_id],
   );
   return result;
 };
@@ -128,10 +136,9 @@ const deleteIssueFromDB = async (id: any, reporter_id: any, role: string) => {
     `
     DELETE FROM issues
     WHERE id = $1
-      AND (reporter_id = $2 OR $3 = 'maintainer')
     RETURNING *
     `,
-    [id, reporter_id, role],
+    [id],
   );
   return result;
 };
